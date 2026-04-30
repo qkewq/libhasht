@@ -144,7 +144,12 @@ int ht_delete(Hashtable *ht, char *key, size_t keylen){
 			continue;
 		}
 		if(memcmp(current->key, key, keylen) == 0){
-			previous->next = current->next;
+			if(current == previous){
+				ht->nodes[index] = current->next;
+			}
+			else{
+				previous->next = current->next;
+			}
 			free(current->key);
 			free(current->val);
 			free(current);
