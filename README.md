@@ -69,19 +69,21 @@ This example demonstrates most of the basic features of the module.
 
 char *keys[] = {
 	"foo",
+	"bar",
 	"fizz",
-}
+};
 
-char *values[]{
+char *values[] = {
 	"fizz",
+	"buzz",
 	"bazz",
-}
+};
 
 int main(int argc, char *argv[]){
 	if(argc < 3){
-		printf("Usage: %s [lookup] [delete]\n",
-		"lookup\tLookup in key in table\n",
-		"delete\tDelete key from table", argv[0]);
+		printf("Usage: %s [lookup] [delete]\n"
+		"lookup\tLookup in key in table\n"
+		"delete\tDelete key from table\n", argv[0]);
 		return 0;
 	}
 
@@ -89,15 +91,15 @@ int main(int argc, char *argv[]){
 	char buff[BUFFSZ] = {0};
 	size_t bufflen = sizeof(buff);
 	int err = 0;
-
 	err = ht_init(&ht, TABLESZ);
 	if(err){
 		printf("Init error %s\n", ht_strerror(err));
 		return 1;
 	}
 
-	for(int i = 0; i < sizeof(keys); i++){
-		err = ht_insert(ht, keys[i], sizeof(keys[i]), values[i], sizeof(valuse[i]));
+	for(int i = 0; i < sizeof(keys) / sizeof(keys[0]); i++){
+		printf("BALLS");
+		err = ht_insert(ht, keys[i], strlen(keys[i]), values[i], strlen(values[i]));
 		if(err){
 			printf("Insert error %s\n", ht_strerror(err));
 			ht_free(ht);
@@ -105,7 +107,7 @@ int main(int argc, char *argv[]){
 		}
 	}
 
-	err = ht_lookup(ht, argv[1], strlen(argv[1]), buff, bufflen);
+	err = ht_lookup(ht, argv[1], strlen(argv[1]), buff, &bufflen);
 	if(!err){
 		printf("KEY: %s | VALUE: %s\n", argv[1], buff);
 	}
@@ -126,7 +128,7 @@ int main(int argc, char *argv[]){
 		printf("KEY: %s | Deleted from table\n", argv[2]);
 	}
 	else if(err == EKNOTFOUND){
-		printf("KEY: %s was not found in table", argv[2]);
+		printf("KEY: %s was not found in table\n", argv[2]);
 	}
 	else{
 		printf("Delete error %s\n", ht_strerror(err));
