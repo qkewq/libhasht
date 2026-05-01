@@ -13,24 +13,27 @@ typedef struct Ht_node{
 	size_t vallen;
 } Ht_node;
 
-int ht_init(Hashtable **res, size_t nelements){
-	if(!res){
-		return EPTRINVALD;
-	}
+Hashtable *ht_init(size_t nelements, int *err){
 	if(!nelements){
-		return ENELINVALD;
+		if(err){
+			*err = ENELINVALD;
+		}
+		return NULL;
 	}
 	Hashtable *ht = calloc(1, sizeof(Hashtable));
 	Ht_node **nodes = calloc(nelements, sizeof(Ht_node *));
 	if(!ht || !nodes){
 		free(ht);
 		free(nodes);
-		return EMEMFAILED;
+		if(err){
+			*err = EMEMFAILED;
+		}
+		return NULL;
 	}
 	ht->nnodes = nelements;
 	ht->nodes = nodes;
-	*res = ht;
-	return SUCCESSFUL;
+
+	return ht;
 }
 
 char *ht_strerror(int err){
@@ -93,7 +96,7 @@ int ht_get_index(char *key, size_t keylen, size_t nnodes){
 	return index % (int)nnodes;
 }
 
-int ht_insert(Hashtable *ht, char *key, size_t keylen, char *val, size_t vallen){
+int ht_insert(Hashtable *ht, const char *key, size_t keylen, const char *val, size_t vallen){
 	if(!ht || !key){
 		return EPTRINVALD;
 	}
@@ -125,7 +128,7 @@ int ht_insert(Hashtable *ht, char *key, size_t keylen, char *val, size_t vallen)
 	return SUCCESSFUL;
 }
 
-int ht_delete(Hashtable *ht, char *key, size_t keylen){
+int ht_delete(Hashtable *ht, const char *key, size_t keylen){
 	if(!ht || !key){
 		return EPTRINVALD;
 	}
@@ -166,7 +169,7 @@ int ht_delete(Hashtable *ht, char *key, size_t keylen){
 	return EKNOTFOUND;
 }
 
-int ht_lookup(Hashtable *ht, char *key, size_t keylen, char *dst, size_t *dstlen){
+int ht_lookup(Hashtable *ht, const char *key, size_t keylen, char *dst, size_t *dstlen){
 	if(!ht || !key || !dst || !dstlen){
 		return EPTRINVALD;
 	}

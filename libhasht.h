@@ -24,7 +24,7 @@ typedef struct Hashtable{
 /* Initialization function for the hash table that */
 /* creates the table with nelements elements and */
 /* places a pointer to the hash table in res */
-int ht_init(Hashtable **res, size_t nelements);
+Hashtable *ht_init(size_t nelements, int *err);
 
 /* Get the string form of an error code returned by a hash table function */
 char *ht_strerror(int err);
@@ -34,11 +34,11 @@ void ht_free(Hashtable *ht);
 
 /* Insert the string key with length keylen paired with value with length vallen */
 /* into the table */
-int ht_insert(Hashtable *ht, char *key, size_t keylen, char *val, size_t vallen);
+int ht_insert(Hashtable *ht, const char *key, size_t keylen, const char *val, size_t vallen);
 
 /* Delete the specified key from the table */
 /* Returns EKNOTFOUND if the key is not in the table */
-int ht_delete(Hashtable *ht, char *key, size_t keylen);
+int ht_delete(Hashtable *ht, const char *key, size_t keylen);
 
 /* Lookup the specified key in the table */
 /* Returns EKNOTFOUND if the key is not found in the table */
@@ -46,6 +46,6 @@ int ht_delete(Hashtable *ht, char *key, size_t keylen);
 /* the amount written */
 /* If dstlen is not big enough to store the value then the value is  */
 /* truncated and ETRUNCATED is returned, dstlen wont be changed if ETRUNCATED is returned */
-int ht_lookup(Hashtable *ht, char *key, size_t keylen, char *dst, size_t *dstlen);
+int ht_lookup(Hashtable *ht, const char *key, size_t keylen, char *dst, size_t *dstlen);
 
 #endif
