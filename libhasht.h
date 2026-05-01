@@ -23,7 +23,8 @@ typedef struct Hashtable{
 
 /* Initialization function for the hash table that */
 /* creates the table with nelements elements and */
-/* places a pointer to the hash table in res */
+/* returns a pointer to it */
+/* On failure it reutrns a null pointer and if err is not null, updates it with the error code */
 Hashtable *ht_init(size_t nelements, int *err);
 
 /* Get the string form of an error code returned by a hash table function */
