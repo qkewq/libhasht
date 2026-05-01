@@ -135,7 +135,6 @@ int main(int argc, char *argv[]){
 	}
 
 	for(int i = 0; i < sizeof(keys) / sizeof(keys[0]); i++){
-		printf("BALLS");
 		err = ht_insert(ht, keys[i], strlen(keys[i]), values[i], strlen(values[i]));
 		if(err){
 			printf("Insert error %s\n", ht_strerror(err));
