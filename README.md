@@ -10,7 +10,7 @@ This module uses a relatively simple hashing function for keys.  It takes the mo
 
 ### NAME
 
-ht_init, ht_strerror, ht_free, ht_insert, ht_delete, ht_lookup - Create and manage hash table
+ht_init, ht_strerror, ht_free, ht_insert, ht_delete, ht_lookup, ht_resize - Create and manage hash table
 
 ### SYNOPSIS
 
@@ -20,6 +20,7 @@ ht_init, ht_strerror, ht_free, ht_insert, ht_delete, ht_lookup - Create and mana
 - [int ht_insert(Hashtable *ht, const char *key, size_t keylen, const char *val, size_t vallen);](#ht_insert)
 - [int ht_delete(Hashtable *ht, const char *key, size_t keylen);](#ht_delete)
 - [int ht_lookup(Hashtable *ht, const char *key, size_t keylen, char *dst, size_t *dstlen);](#ht_lookup)
+- [int ht_resize(Hashtable *ht, size_t nelements);](#ht_resize)
 
 ### DESCRIPTION
 
@@ -70,6 +71,13 @@ __int ht_delete(Hashtable `*ht`, const char `*key`, size_t `keylen`);__
 
 __int ht_lookup(Hashtable `*ht`, const char `*key`, size_t `keylen`, char `*dst`, size_t `*dstlen`);__
 >The `ht_lookup` function searches the table for `key` with size `keylen` and places the value in the buffer pointed to by `dst` with size `dstlen`.  If the key is not found in the table then the function returns `EKNOTFOUND`.  When the function successfully places the value in `dst` it updates `dstlen` with the actual size of the value that was returned.  If `dstlen` is smaller than the value, it will be truncated to the size `dstlen` and the function will return `ETRUNCATED`.
+
+<br>
+
+#### `ht_resize`
+
+__int ht_resize(Hashtable `*ht`, size_t `nelements`);__
+>The `ht_resize` function resizes an existing hash table to have `nelements` number of elements.  It updates the hashtable struct passed in to point to the new table and frees the old one.  If it does not return 0 then the table will remain unchanged.
 
 <br>
 
@@ -168,6 +176,13 @@ int main(int argc, char *argv[]){
 	}
 	else{
 		printf("Delete error %s\n", ht_strerror(err));
+		ht_free(ht);
+		return 1;
+	}
+
+	err = ht_resize(ht, 2 * TABLESZ);
+	if(err){
+		printf("Resize error %s", ht_strerror(err));
 		ht_free(ht);
 		return 1;
 	}
