@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <stdint.h>
 
 #include "libhasht.h"
 
@@ -89,9 +90,6 @@ int ht_hash(char *key, size_t keylen){
 
 int ht_get_index(char *key, size_t keylen, size_t nnodes){
 	int index = ht_hash(key, keylen);
-	if(index == -1){
-		return EHASHFFAIL;
-	}
 
 	return index % (int)nnodes;
 }
@@ -102,9 +100,7 @@ int ht_insert(Hashtable *ht, const char *key, size_t keylen, const char *val, si
 	}
 
 	int index = ht_get_index(key, keylen, ht->nnodes);
-	if(index == -1){
-		return EHASHFFAIL;
-	}
+
 	Ht_node *new = calloc(1, sizeof(Ht_node));
 	char *stored_key = calloc(1, keylen);
 	char *stored_val = calloc(1, vallen);
@@ -134,9 +130,6 @@ int ht_delete(Hashtable *ht, const char *key, size_t keylen){
 	}
 
 	int index = ht_get_index(key, keylen, ht->nnodes);
-	if(index == -1){
-		return EHASHFFAIL;
-	}
 
 	Ht_node *previous = ht->nodes[index];
 	Ht_node *current = previous;
@@ -175,9 +168,6 @@ int ht_lookup(Hashtable *ht, const char *key, size_t keylen, char *dst, size_t *
 	}
 
 	int index = ht_get_index(key, keylen, ht->nnodes);
-	if(index == -1){
-		return EHASHFFAIL;
-	}
 
 	Ht_node *current = ht->nodes[index];
 	while(current){
@@ -203,4 +193,37 @@ int ht_lookup(Hashtable *ht, const char *key, size_t keylen, char *dst, size_t *
 	}
 
 	return EKNOTFOUND;
+}
+
+int ht_resize(Hashtable *ht, size_t nelements){
+	if(!ht){
+		return EPTRINVALD;
+	}
+	if(!nelements){
+		return ENELINVALD;
+	}
+
+	Ht_node **new_nodes = calloc(nelements, sizeof(Ht_node *));
+	if(!new_nodes){
+		return EMEMFAILED;
+	}
+
+	Ht_node *current = NULL;
+	Ht_node *next = NULL;
+	for(int i = 0; i < ht->nnodes; i++){
+		current = ht->nodes[i];
+		while(current){
+			next = current->next;
+			int index = ht_get_index(current->key, current->keylen, nelements);
+			current->next = new_nodes[index];
+			new_nodes[index] = current;
+			current = next;
+		}
+	}
+
+	free(ht->nodes);
+	ht->nnodes = nelements;
+	ht->nodes = new_nodes;
+
+	return SUCCESSFUL;
 }

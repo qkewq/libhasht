@@ -49,4 +49,8 @@ int ht_delete(Hashtable *ht, const char *key, size_t keylen);
 /* truncated and ETRUNCATED is returned, dstlen wont be changed if ETRUNCATED is returned */
 int ht_lookup(Hashtable *ht, const char *key, size_t keylen, char *dst, size_t *dstlen);
 
+/* Resize the table to have nelements number of buckets */
+/* Changes what ht.nodes points to */
+int ht_resize(Hashtable *ht, size_t nelements);
+
 #endif
