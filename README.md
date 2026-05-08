@@ -3,8 +3,7 @@ libhasht is a small C module for creating and using hash tables
 
 Hash tables store key value pairs, since it indexes using the hash value of the key it offers nearly constant time lookups for values.  It is not completely O(1) for lookups because when hash collisions occur the key value pairs are chained together in a linked list.  When searching for a value the lookup function must run through the list until it finds the value.
 
-This module uses a relatively simple hashing function for keys.  It takes the modulo of the sum of the characters in the key times their position in the string + 1:
-`index = ∑(character * string_position + 1) mod total_indexes`
+This module uses a relatively simple hashing function for keys.  It starts at the prime number `1543`.  It then takes the sum of itself times the product of the character and its position in the string, `hash += hash * (key[i] * (i + 1))`, where `key` is a string and `i` is an iterator over the string.
 
 # The API
 
