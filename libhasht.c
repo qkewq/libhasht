@@ -80,9 +80,9 @@ void ht_free(Hashtable *ht){
 }
 
 int ht_hash(char *key, size_t keylen){
-	int ret = 0;
+	int ret = 1543; // magic number
 	for(int i = 0; i < keylen; i++){
-		ret += key[i] * (i + 1); /* +1 to avoid multiplying by 0 */
+		ret += ret * (key[i] * (i + 1)); /* +1 to avoid multiplying by 0 */
 	}
 
 	return ret;
@@ -90,6 +90,7 @@ int ht_hash(char *key, size_t keylen){
 
 int ht_get_index(char *key, size_t keylen, size_t nnodes){
 	int index = ht_hash(key, keylen);
+	index = index * (int)nnodes;
 
 	return index % (int)nnodes;
 }
